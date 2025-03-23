@@ -1019,15 +1019,33 @@ local _isrenderobj = clonefunction(isrenderobj);
  
 genv.getrenderproperty = newcclosure(function(x, y)
     _assert(_isrenderobj(x), _stringformat("invalid argument #1 to 'getrenderproperty' (Drawing expected, got %s)", _typeof(x)));
+    _assert(typeof(y) == "string", _stringformat("invalid argument #2 to 'getrenderproperty' (string expected, got %s)", _typeof(y)));
+
     return x[y];
 end);
- 
+
 genv.setrenderproperty = newcclosure(function(x, y, z)
     _assert(_isrenderobj(x), _stringformat("invalid argument #1 to 'setrenderproperty' (Drawing expected, got %s)", _typeof(x)));
-         local success, err = pcall(function()
-            x[y] = z;
-    end)
-    if not success and err then warn(err) end
+    _assert(typeof(y) == "string", _stringformat("invalid argument #2 to 'setrenderproperty' (string expected, got %s)", _typeof(y)));
 
+    if not x[y] then
+        warn(_stringformat("invalid property '%s' for setrenderproperty", y))
+        return
+    end
+
+    local expectedType = typeof(x[y])
+    if typeof(z) ~= expectedType then
+        warn(_stringformat("invalid argument #3 to 'setrenderproperty' (expected %s, got %s)", expectedType, _typeof(z)))
+        return
+    end
+
+    local success, err = pcall(function()
+        x[y] = z;
+    end)
+
+    if not success then
+        warn(err)
+    end
 end);
+
 
