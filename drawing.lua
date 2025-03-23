@@ -1024,6 +1024,10 @@ end);
  
 genv.setrenderproperty = newcclosure(function(x, y, z)
     _assert(_isrenderobj(x), _stringformat("invalid argument #1 to 'setrenderproperty' (Drawing expected, got %s)", _typeof(x)));
-    x[y] = z;
+         local success, err = pcall(function()
+            x[y] = z;
+    end)
+    if not success and err then warn(err) end
+
 end);
 
